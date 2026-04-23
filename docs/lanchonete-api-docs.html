@@ -1,0 +1,1060 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Lanchonete API — Documentação</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=DM+Mono:wght@300;400;500&family=Fraunces:ital,wght@0,300;0,400;0,600;1,300&family=Instrument+Sans:wght@400;500;600&display=swap" rel="stylesheet">
+<script src="https://cdnjs.cloudflare.com/ajax/libs/mermaid/10.6.1/mermaid.min.js"></script>
+<style>
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+  :root {
+    --bg: #0d0f14;
+    --bg2: #13151c;
+    --bg3: #1a1d26;
+    --bg4: #21252f;
+    --border: rgba(255,255,255,0.07);
+    --border2: rgba(255,255,255,0.12);
+    --text: #e8eaf0;
+    --muted: #8b90a0;
+    --hint: #555a6a;
+    --accent: #f0633a;
+    --accent2: #4f8ef7;
+    --accent3: #3ecf8e;
+    --accent4: #f5c842;
+    --mono: 'DM Mono', monospace;
+    --sans: 'Instrument Sans', sans-serif;
+    --serif: 'Fraunces', serif;
+  }
+
+  html { scroll-behavior: smooth; }
+
+  body {
+    background: var(--bg);
+    color: var(--text);
+    font-family: var(--sans);
+    font-size: 15px;
+    line-height: 1.6;
+    min-height: 100vh;
+  }
+
+  /* SIDEBAR NAV */
+  .sidebar {
+    position: fixed;
+    top: 0; left: 0;
+    width: 220px;
+    height: 100vh;
+    background: var(--bg2);
+    border-right: 1px solid var(--border);
+    overflow-y: auto;
+    padding: 2rem 0;
+    z-index: 100;
+  }
+
+  .sidebar-logo {
+    padding: 0 1.25rem 1.5rem;
+    border-bottom: 1px solid var(--border);
+    margin-bottom: 1.25rem;
+  }
+
+  .sidebar-logo .logo-eye {
+    font-family: var(--mono);
+    font-size: 10px;
+    color: var(--hint);
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    margin-bottom: 4px;
+  }
+
+  .sidebar-logo h1 {
+    font-family: var(--serif);
+    font-size: 20px;
+    font-weight: 300;
+    letter-spacing: -0.3px;
+    line-height: 1.2;
+  }
+
+  .sidebar-logo h1 em {
+    font-style: italic;
+    color: var(--accent);
+  }
+
+  .nav-group { margin-bottom: 1.25rem; padding: 0 1.25rem; }
+
+  .nav-group-label {
+    font-family: var(--mono);
+    font-size: 10px;
+    text-transform: uppercase;
+    letter-spacing: 0.1em;
+    color: var(--hint);
+    margin-bottom: 6px;
+  }
+
+  .nav-item {
+    display: block;
+    padding: 5px 8px;
+    border-radius: 5px;
+    font-size: 13px;
+    color: var(--muted);
+    text-decoration: none;
+    transition: all 0.15s;
+    margin-bottom: 1px;
+  }
+
+  .nav-item:hover { background: var(--bg3); color: var(--text); }
+  .nav-item.active { background: var(--bg4); color: var(--text); }
+
+  /* MAIN */
+  .main {
+    margin-left: 220px;
+    padding: 0 3rem 4rem;
+    max-width: 960px;
+  }
+
+  /* HERO */
+  .hero {
+    padding: 4rem 0 3rem;
+    border-bottom: 1px solid var(--border);
+    margin-bottom: 3rem;
+    position: relative;
+    overflow: hidden;
+  }
+
+  .hero::before {
+    content: 'API';
+    position: absolute;
+    right: -20px;
+    top: 10px;
+    font-family: var(--serif);
+    font-size: 180px;
+    font-weight: 600;
+    color: rgba(255,255,255,0.025);
+    pointer-events: none;
+    line-height: 1;
+  }
+
+  .hero-eye {
+    font-family: var(--mono);
+    font-size: 11px;
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
+    color: var(--accent);
+    margin-bottom: 0.75rem;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+  }
+
+  .hero-eye::before { content: ''; width: 24px; height: 1px; background: var(--accent); }
+
+  .hero h1 {
+    font-family: var(--serif);
+    font-size: 52px;
+    font-weight: 300;
+    letter-spacing: -1px;
+    line-height: 1.1;
+    margin-bottom: 1rem;
+  }
+
+  .hero h1 em { font-style: italic; color: var(--accent); }
+
+  .hero-desc {
+    font-size: 16px;
+    color: var(--muted);
+    max-width: 560px;
+    line-height: 1.7;
+    margin-bottom: 1.5rem;
+  }
+
+  .badge-row { display: flex; flex-wrap: wrap; gap: 6px; }
+
+  .badge {
+    font-family: var(--mono);
+    font-size: 11px;
+    padding: 4px 10px;
+    border-radius: 4px;
+    border: 1px solid var(--border2);
+    color: var(--muted);
+    background: var(--bg3);
+  }
+
+  .badge.g { border-color: rgba(62,207,142,0.3); color: var(--accent3); background: rgba(62,207,142,0.08); }
+  .badge.b { border-color: rgba(79,142,247,0.3); color: var(--accent2); background: rgba(79,142,247,0.08); }
+  .badge.o { border-color: rgba(240,99,58,0.3); color: var(--accent); background: rgba(240,99,58,0.08); }
+
+  /* SECTIONS */
+  .section { margin-bottom: 3.5rem; }
+
+  .section-header {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    margin-bottom: 1.5rem;
+  }
+
+  .section-num {
+    font-family: var(--mono);
+    font-size: 11px;
+    color: var(--accent);
+    background: rgba(240,99,58,0.1);
+    border: 1px solid rgba(240,99,58,0.2);
+    padding: 3px 8px;
+    border-radius: 4px;
+    min-width: 32px;
+    text-align: center;
+  }
+
+  .section-title {
+    font-family: var(--serif);
+    font-size: 22px;
+    font-weight: 300;
+    letter-spacing: -0.3px;
+  }
+
+  .section-title em { font-style: italic; color: var(--accent); }
+
+  /* ACTORS */
+  .actors-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
+    gap: 10px;
+  }
+
+  .actor-card {
+    background: var(--bg2);
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    padding: 1rem;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    transition: border-color 0.2s;
+  }
+
+  .actor-card:hover { border-color: var(--border2); }
+
+  .actor-avatar {
+    width: 36px; height: 36px;
+    border-radius: 8px;
+    display: flex; align-items: center; justify-content: center;
+    font-family: var(--mono);
+    font-size: 13px;
+    font-weight: 500;
+    flex-shrink: 0;
+  }
+
+  .actor-name { font-size: 13px; font-weight: 500; }
+  .actor-role { font-size: 11px; color: var(--muted); font-family: var(--mono); }
+
+  /* FLOW */
+  .flow-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(170px, 1fr));
+    gap: 8px;
+  }
+
+  .flow-card {
+    background: var(--bg2);
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    padding: 0.9rem 1rem;
+    position: relative;
+    overflow: hidden;
+  }
+
+  .flow-card::after {
+    content: attr(data-step);
+    position: absolute;
+    top: 8px; right: 10px;
+    font-family: var(--mono);
+    font-size: 11px;
+    color: var(--hint);
+  }
+
+  .flow-tag {
+    font-family: var(--mono);
+    font-size: 10px;
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+    margin-bottom: 5px;
+  }
+
+  .flow-title { font-size: 13px; font-weight: 500; margin-bottom: 3px; }
+  .flow-detail { font-size: 12px; color: var(--muted); }
+
+  .flow-card.pre .flow-tag { color: var(--accent4); }
+  .flow-card.pre { border-left: 2px solid rgba(245,200,66,0.4); }
+  .flow-card.step .flow-tag { color: var(--accent2); }
+  .flow-card.step { border-left: 2px solid rgba(79,142,247,0.4); }
+  .flow-card.ok .flow-tag { color: var(--accent3); }
+  .flow-card.ok { border-left: 2px solid rgba(62,207,142,0.4); }
+  .flow-card.err .flow-tag { color: var(--accent); }
+  .flow-card.err { border-left: 2px solid rgba(240,99,58,0.4); }
+
+  /* ENDPOINTS */
+  .ep-block { margin-bottom: 2rem; }
+
+  .ep-group-label {
+    font-family: var(--mono);
+    font-size: 11px;
+    text-transform: uppercase;
+    letter-spacing: 0.1em;
+    color: var(--hint);
+    margin-bottom: 8px;
+    padding-bottom: 6px;
+    border-bottom: 1px solid var(--border);
+  }
+
+  .ep-row {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    padding: 8px 12px;
+    border-radius: 7px;
+    background: var(--bg2);
+    border: 1px solid var(--border);
+    margin-bottom: 4px;
+    transition: border-color 0.15s;
+  }
+
+  .ep-row:hover { border-color: var(--border2); }
+
+  .method {
+    font-family: var(--mono);
+    font-size: 11px;
+    font-weight: 500;
+    padding: 2px 8px;
+    border-radius: 4px;
+    min-width: 48px;
+    text-align: center;
+    flex-shrink: 0;
+  }
+
+  .GET { background: rgba(62,207,142,0.12); color: #3ecf8e; }
+  .POST { background: rgba(79,142,247,0.12); color: #4f8ef7; }
+  .PATCH { background: rgba(245,200,66,0.12); color: #f5c842; }
+
+  .ep-path { font-family: var(--mono); font-size: 12px; flex: 1; }
+  .ep-desc { font-size: 12px; color: var(--muted); }
+
+  /* ARCH */
+  .arch-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(140px, 1fr));
+    gap: 8px;
+  }
+
+  .arch-card {
+    background: var(--bg2);
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    padding: 1rem;
+    transition: border-color 0.2s;
+  }
+
+  .arch-card:hover { border-color: var(--border2); }
+
+  .arch-file {
+    font-family: var(--mono);
+    font-size: 12px;
+    color: var(--accent2);
+    margin-bottom: 6px;
+  }
+
+  .arch-desc { font-size: 12px; color: var(--muted); line-height: 1.5; }
+
+  /* DER */
+  .der-section { margin-bottom: 2rem; }
+
+  .der-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(160px, 1fr));
+    gap: 8px;
+    margin-bottom: 1.5rem;
+  }
+
+  .entity-card {
+    background: var(--bg2);
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    overflow: hidden;
+  }
+
+  .entity-header {
+    background: var(--bg3);
+    padding: 6px 12px;
+    font-family: var(--mono);
+    font-size: 12px;
+    font-weight: 500;
+    border-bottom: 1px solid var(--border);
+    color: var(--accent2);
+  }
+
+  .entity-fields { padding: 8px 12px; }
+
+  .entity-field {
+    font-family: var(--mono);
+    font-size: 11px;
+    color: var(--muted);
+    padding: 2px 0;
+    display: flex;
+    gap: 8px;
+  }
+
+  .entity-field .ftype { color: var(--hint); }
+
+  /* SEQUENCE */
+  .seq-container {
+    background: var(--bg2);
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    overflow: hidden;
+  }
+
+  .seq-header {
+    background: var(--bg3);
+    padding: 10px 16px;
+    border-bottom: 1px solid var(--border);
+    font-family: var(--mono);
+    font-size: 11px;
+    color: var(--muted);
+    text-transform: uppercase;
+    letter-spacing: 0.1em;
+  }
+
+  .seq-body { padding: 1.5rem; overflow-x: auto; }
+
+  .seq-diagram {
+    display: flex;
+    gap: 0;
+    min-width: 580px;
+    position: relative;
+  }
+
+  .seq-actor {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    position: relative;
+  }
+
+  .seq-actor-label {
+    background: var(--bg3);
+    border: 1px solid var(--border2);
+    border-radius: 6px;
+    padding: 5px 10px;
+    font-family: var(--mono);
+    font-size: 11px;
+    font-weight: 500;
+    color: var(--text);
+    white-space: nowrap;
+    z-index: 2;
+    position: relative;
+  }
+
+  .seq-lifeline {
+    width: 1px;
+    flex: 1;
+    background: var(--border2);
+    margin-top: 0;
+    min-height: 400px;
+    position: relative;
+  }
+
+  .seq-messages {
+    position: absolute;
+    top: 50px;
+    left: 0; right: 0;
+  }
+
+  .seq-msg {
+    display: flex;
+    align-items: center;
+    height: 48px;
+    position: relative;
+  }
+
+  .msg-arrow {
+    position: absolute;
+    height: 1px;
+    display: flex;
+    align-items: center;
+  }
+
+  .msg-arrow.solid { border-top: 1.5px solid var(--accent2); }
+  .msg-arrow.dashed { border-top: 1.5px dashed rgba(62,207,142,0.6); }
+
+  .msg-arrow::after {
+    content: '▶';
+    position: absolute;
+    right: -6px;
+    font-size: 8px;
+    top: -7px;
+    color: var(--accent2);
+  }
+
+  .msg-arrow.dashed::after { color: var(--accent3); right: unset; left: -6px; content: '◀'; }
+
+  .msg-label {
+    position: absolute;
+    font-family: var(--mono);
+    font-size: 11px;
+    color: var(--text);
+    background: var(--bg);
+    padding: 1px 6px;
+    top: -18px;
+    left: 50%;
+    transform: translateX(-50%);
+    white-space: nowrap;
+    border-radius: 3px;
+    border: 1px solid var(--border);
+  }
+
+  /* ERROR BLOCK */
+  .err-block {
+    background: var(--bg2);
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    padding: 1.25rem 1.5rem;
+    font-family: var(--mono);
+    font-size: 13px;
+    line-height: 1.9;
+    border-left: 3px solid rgba(240,99,58,0.5);
+  }
+
+  .jk { color: var(--muted); }
+  .jstr { color: #e9c46a; }
+  .jnum { color: var(--accent2); }
+  .jkey { color: var(--text); }
+
+  /* HTTP codes grid */
+  .http-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(120px, 1fr));
+    gap: 8px;
+  }
+
+  .http-card {
+    background: var(--bg2);
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    padding: 0.75rem 1rem;
+    text-align: center;
+  }
+
+  .http-code {
+    font-family: var(--mono);
+    font-size: 20px;
+    font-weight: 500;
+    margin-bottom: 4px;
+  }
+
+  .http-desc { font-size: 12px; color: var(--muted); }
+
+  .http-card.s2 .http-code { color: var(--accent3); }
+  .http-card.s4 .http-code { color: var(--accent4); }
+  .http-card.s5 .http-code { color: var(--accent); }
+
+  /* MERMAID DARK OVERRIDE */
+  .mermaid-wrap {
+    background: var(--bg2);
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    padding: 1.5rem;
+    overflow-x: auto;
+  }
+
+  .mermaid svg {
+    max-width: 100%;
+  }
+
+  /* DIVIDER */
+  hr { border: none; border-top: 1px solid var(--border); margin: 2rem 0; }
+
+  /* FOOTER */
+  footer {
+    margin-top: 4rem;
+    padding-top: 2rem;
+    border-top: 1px solid var(--border);
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    color: var(--hint);
+    font-size: 12px;
+    font-family: var(--mono);
+  }
+
+  /* SCROLLBAR */
+  ::-webkit-scrollbar { width: 6px; height: 6px; }
+  ::-webkit-scrollbar-track { background: var(--bg); }
+  ::-webkit-scrollbar-thumb { background: var(--bg4); border-radius: 3px; }
+
+  /* ANIMATIONS */
+  @keyframes fadeUp {
+    from { opacity: 0; transform: translateY(16px); }
+    to { opacity: 1; transform: translateY(0); }
+  }
+
+  .hero { animation: fadeUp 0.5s ease both; }
+  .section { animation: fadeUp 0.5s ease both; }
+
+  /* RESPONSIVE */
+  @media (max-width: 768px) {
+    .sidebar { display: none; }
+    .main { margin-left: 0; padding: 0 1.25rem 3rem; }
+    .hero h1 { font-size: 36px; }
+    .hero::before { display: none; }
+  }
+</style>
+</head>
+<body>
+
+<nav class="sidebar">
+  <div class="sidebar-logo">
+    <p class="logo-eye">Documentação</p>
+    <h1>Lanchonete <em>API</em></h1>
+  </div>
+  <div class="nav-group">
+    <p class="nav-group-label">Visão Geral</p>
+    <a href="#overview" class="nav-item">Introdução</a>
+    <a href="#actors" class="nav-item">Atores</a>
+    <a href="#flow" class="nav-item">Fluxo crítico</a>
+  </div>
+  <div class="nav-group">
+    <p class="nav-group-label">Referência</p>
+    <a href="#endpoints" class="nav-item">Endpoints</a>
+    <a href="#arch" class="nav-item">Arquitetura</a>
+    <a href="#entities" class="nav-item">Entidades</a>
+    <a href="#sequence" class="nav-item">Sequência</a>
+  </div>
+  <div class="nav-group">
+    <p class="nav-group-label">Contratos</p>
+    <a href="#errors" class="nav-item">Erros</a>
+    <a href="#http" class="nav-item">Códigos HTTP</a>
+  </div>
+</nav>
+
+<main class="main">
+
+  <!-- HERO -->
+  <section class="hero" id="overview">
+    <p class="hero-eye">Backend REST</p>
+    <h1>Lanchonete <em>API</em></h1>
+    <p class="hero-desc">
+      Backend completo com autenticação JWT por roles, gestão de pedidos multicanal,
+      controle de estoque, programa de fidelidade e integração com gateway de pagamento mock.
+    </p>
+    <div class="badge-row">
+      <span class="badge g">Django REST</span>
+      <span class="badge g">JWT Auth</span>
+      <span class="badge b">Roles</span>
+      <span class="badge b">Mock Payment</span>
+      <span class="badge">Estoque</span>
+      <span class="badge">Fidelidade</span>
+      <span class="badge o">Promoções</span>
+    </div>
+  </section>
+
+  <!-- ATORES -->
+  <section class="section" id="actors">
+    <div class="section-header">
+      <span class="section-num">01</span>
+      <h2 class="section-title">Atores do <em>sistema</em></h2>
+    </div>
+    <div class="actors-grid">
+      <div class="actor-card">
+        <div class="actor-avatar" style="background:rgba(79,142,247,0.15);color:#4f8ef7">C</div>
+        <div>
+          <p class="actor-name">Cliente</p>
+          <p class="actor-role">realiza pedidos</p>
+        </div>
+      </div>
+      <div class="actor-card">
+        <div class="actor-avatar" style="background:rgba(62,207,142,0.15);color:#3ecf8e">A</div>
+        <div>
+          <p class="actor-name">Atendente</p>
+          <p class="actor-role">gerencia status</p>
+        </div>
+      </div>
+      <div class="actor-card">
+        <div class="actor-avatar" style="background:rgba(245,200,66,0.15);color:#f5c842">K</div>
+        <div>
+          <p class="actor-name">Cozinha</p>
+          <p class="actor-role">prepara pedidos</p>
+        </div>
+      </div>
+      <div class="actor-card">
+        <div class="actor-avatar" style="background:rgba(240,99,58,0.15);color:#f0633a">G</div>
+        <div>
+          <p class="actor-name">Gerente</p>
+          <p class="actor-role">administração</p>
+        </div>
+      </div>
+      <div class="actor-card">
+        <div class="actor-avatar" style="background:rgba(139,144,160,0.15);color:#8b90a0">P</div>
+        <div>
+          <p class="actor-name">Gateway</p>
+          <p class="actor-role">pagamento mock</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- FLUXO CRÍTICO -->
+  <section class="section" id="flow">
+    <div class="section-header">
+      <span class="section-num">02</span>
+      <h2 class="section-title">Fluxo <em>crítico</em></h2>
+    </div>
+    <p style="font-size:13px;color:var(--muted);margin-bottom:1.25rem;">Realizar pedido + solicitar pagamento</p>
+    <div class="flow-grid">
+      <div class="flow-card pre" data-step="①">
+        <p class="flow-tag">Pré-condição</p>
+        <p class="flow-title">Autenticado</p>
+        <p class="flow-detail">Token JWT válido</p>
+      </div>
+      <div class="flow-card pre" data-step="②">
+        <p class="flow-tag">Pré-condição</p>
+        <p class="flow-title">Unidade ativa</p>
+        <p class="flow-detail">canalPedido informado</p>
+      </div>
+      <div class="flow-card pre" data-step="③">
+        <p class="flow-tag">Pré-condição</p>
+        <p class="flow-title">Itens em estoque</p>
+        <p class="flow-detail">Verificação prévia</p>
+      </div>
+      <div class="flow-card step" data-step="④">
+        <p class="flow-tag">Ação</p>
+        <p class="flow-title">Cliente envia pedido</p>
+        <p class="flow-detail">POST /api/pedidos/</p>
+      </div>
+      <div class="flow-card step" data-step="⑤">
+        <p class="flow-tag">Sistema</p>
+        <p class="flow-title">Reserva estoque</p>
+        <p class="flow-detail">Baixa automática</p>
+      </div>
+      <div class="flow-card step" data-step="⑥">
+        <p class="flow-tag">Sistema</p>
+        <p class="flow-title">Calcula total</p>
+        <p class="flow-detail">Soma itens × preço</p>
+      </div>
+      <div class="flow-card step" data-step="⑦">
+        <p class="flow-tag">Gateway</p>
+        <p class="flow-title">Solicita pagamento</p>
+        <p class="flow-detail">Mock externo</p>
+      </div>
+      <div class="flow-card ok" data-step="⑧">
+        <p class="flow-tag">Sucesso</p>
+        <p class="flow-title">EM_PREPARO</p>
+        <p class="flow-detail">Pontos creditados</p>
+      </div>
+      <div class="flow-card err" data-step="✕">
+        <p class="flow-tag">Exceção</p>
+        <p class="flow-title">Sem estoque</p>
+        <p class="flow-detail">HTTP 409</p>
+      </div>
+      <div class="flow-card err" data-step="✕">
+        <p class="flow-tag">Exceção</p>
+        <p class="flow-title">Produto inválido</p>
+        <p class="flow-detail">HTTP 400</p>
+      </div>
+      <div class="flow-card err" data-step="✕">
+        <p class="flow-tag">Exceção</p>
+        <p class="flow-title">Pag. negado</p>
+        <p class="flow-detail">Pedido cancelado</p>
+      </div>
+      <div class="flow-card err" data-step="✕">
+        <p class="flow-tag">Exceção</p>
+        <p class="flow-title">Sem autenticação</p>
+        <p class="flow-detail">HTTP 401</p>
+      </div>
+    </div>
+  </section>
+
+  <!-- ENDPOINTS -->
+  <section class="section" id="endpoints">
+    <div class="section-header">
+      <span class="section-num">03</span>
+      <h2 class="section-title"><em>Endpoints</em></h2>
+    </div>
+
+    <div class="ep-block">
+      <p class="ep-group-label">Auth</p>
+      <div class="ep-row"><span class="method POST">POST</span><span class="ep-path">/api/auth/register/</span><span class="ep-desc">Cadastro de usuário</span></div>
+      <div class="ep-row"><span class="method POST">POST</span><span class="ep-path">/api/auth/token/</span><span class="ep-desc">Login — obtém JWT</span></div>
+      <div class="ep-row"><span class="method POST">POST</span><span class="ep-path">/api/auth/token/refresh/</span><span class="ep-desc">Renovar token</span></div>
+    </div>
+
+    <div class="ep-block">
+      <p class="ep-group-label">Usuários</p>
+      <div class="ep-row"><span class="method GET">GET</span><span class="ep-path">/api/usuarios/me/</span><span class="ep-desc">Dados do usuário autenticado</span></div>
+    </div>
+
+    <div class="ep-block">
+      <p class="ep-group-label">Unidades & Cardápio</p>
+      <div class="ep-row"><span class="method GET">GET</span><span class="ep-path">/api/unidades/</span><span class="ep-desc">Lista todas as unidades</span></div>
+      <div class="ep-row"><span class="method GET">GET</span><span class="ep-path">/api/unidades/{id}/cardapio/</span><span class="ep-desc">Cardápio por unidade</span></div>
+      <div class="ep-row"><span class="method GET">GET</span><span class="ep-path">/api/produtos/</span><span class="ep-desc">Lista produtos</span></div>
+      <div class="ep-row"><span class="method POST">POST</span><span class="ep-path">/api/produtos/</span><span class="ep-desc">Criar produto</span></div>
+    </div>
+
+    <div class="ep-block">
+      <p class="ep-group-label">Pedidos</p>
+      <div class="ep-row"><span class="method GET">GET</span><span class="ep-path">/api/pedidos/</span><span class="ep-desc">?canalPedido=TOTEM&status=PRONTO</span></div>
+      <div class="ep-row"><span class="method POST">POST</span><span class="ep-path">/api/pedidos/</span><span class="ep-desc">Criar pedido</span></div>
+      <div class="ep-row"><span class="method GET">GET</span><span class="ep-path">/api/pedidos/{id}/</span><span class="ep-desc">Detalhe do pedido</span></div>
+      <div class="ep-row"><span class="method PATCH">PATCH</span><span class="ep-path">/api/pedidos/{id}/status/</span><span class="ep-desc">Atualizar status</span></div>
+      <div class="ep-row"><span class="method POST">POST</span><span class="ep-path">/api/pedidos/{id}/cancelamento/</span><span class="ep-desc">Cancelar pedido + estorno</span></div>
+    </div>
+
+    <div class="ep-block">
+      <p class="ep-group-label">Estoque</p>
+      <div class="ep-row"><span class="method GET">GET</span><span class="ep-path">/api/estoques/</span><span class="ep-desc">?unidadeId=1</span></div>
+      <div class="ep-row"><span class="method POST">POST</span><span class="ep-path">/api/estoques/movimentacoes/</span><span class="ep-desc">Registrar movimentação</span></div>
+    </div>
+
+    <div class="ep-block">
+      <p class="ep-group-label">Fidelidade</p>
+      <div class="ep-row"><span class="method GET">GET</span><span class="ep-path">/api/fidelidade/saldo/</span><span class="ep-desc">Saldo de pontos</span></div>
+      <div class="ep-row"><span class="method PATCH">PATCH</span><span class="ep-path">/api/fidelidade/saldo/</span><span class="ep-desc">Atualizar consentimento</span></div>
+      <div class="ep-row"><span class="method GET">GET</span><span class="ep-path">/api/fidelidade/historico/</span><span class="ep-desc">Extrato de pontos</span></div>
+      <div class="ep-row"><span class="method POST">POST</span><span class="ep-path">/api/fidelidade/resgates/</span><span class="ep-desc">Resgatar pontos</span></div>
+    </div>
+
+    <div class="ep-block">
+      <p class="ep-group-label">Pagamentos</p>
+      <div class="ep-row"><span class="method GET">GET</span><span class="ep-path">/api/pagamentos/pedidos/{pedido_id}/</span><span class="ep-desc">Status do pagamento</span></div>
+    </div>
+
+    <div class="ep-block">
+      <p class="ep-group-label">Promoções</p>
+      <div class="ep-row"><span class="method GET">GET</span><span class="ep-path">/api/promocoes/</span><span class="ep-desc">Campanhas ativas</span></div>
+    </div>
+  </section>
+
+  <!-- ARQUITETURA -->
+  <section class="section" id="arch">
+    <div class="section-header">
+      <span class="section-num">04</span>
+      <h2 class="section-title"><em>Arquitetura</em> — camadas</h2>
+    </div>
+    <div class="arch-grid">
+      <div class="arch-card">
+        <p class="arch-file">core/models.py</p>
+        <p class="arch-desc">Domínio e persistência ORM</p>
+      </div>
+      <div class="arch-card">
+        <p class="arch-file">core/services.py</p>
+        <p class="arch-desc">Casos de uso e regras de negócio</p>
+      </div>
+      <div class="arch-card">
+        <p class="arch-file">core/serializers.py</p>
+        <p class="arch-desc">Contrato da API e validações entrada/saída</p>
+      </div>
+      <div class="arch-card">
+        <p class="arch-file">core/views.py</p>
+        <p class="arch-desc">Controllers e endpoints REST</p>
+      </div>
+      <div class="arch-card">
+        <p class="arch-file">core/permissions.py</p>
+        <p class="arch-desc">Controle de acesso por role</p>
+      </div>
+      <div class="arch-card">
+        <p class="arch-file">core/exceptions.py</p>
+        <p class="arch-desc">Padrão de erros da aplicação</p>
+      </div>
+    </div>
+  </section>
+
+  <!-- ENTIDADES -->
+  <section class="section" id="entities">
+    <div class="section-header">
+      <span class="section-num">05</span>
+      <h2 class="section-title">Entidades — <em>DER</em></h2>
+    </div>
+    <div class="der-grid">
+      <div class="entity-card">
+        <div class="entity-header">USUARIO</div>
+        <div class="entity-fields">
+          <div class="entity-field"><span>username</span><span class="ftype">str</span></div>
+          <div class="entity-field"><span>email</span><span class="ftype">str</span></div>
+          <div class="entity-field"><span>role</span><span class="ftype">enum</span></div>
+        </div>
+      </div>
+      <div class="entity-card">
+        <div class="entity-header">PEDIDO</div>
+        <div class="entity-fields">
+          <div class="entity-field"><span>canalPedido</span><span class="ftype">enum</span></div>
+          <div class="entity-field"><span>status</span><span class="ftype">enum</span></div>
+          <div class="entity-field"><span>valor_total</span><span class="ftype">dec</span></div>
+        </div>
+      </div>
+      <div class="entity-card">
+        <div class="entity-header">ITEM_PEDIDO</div>
+        <div class="entity-fields">
+          <div class="entity-field"><span>quantidade</span><span class="ftype">int</span></div>
+          <div class="entity-field"><span>preco_unitario</span><span class="ftype">dec</span></div>
+          <div class="entity-field"><span>subtotal</span><span class="ftype">dec</span></div>
+        </div>
+      </div>
+      <div class="entity-card">
+        <div class="entity-header">PAGAMENTO</div>
+        <div class="entity-fields">
+          <div class="entity-field"><span>status</span><span class="ftype">enum</span></div>
+          <div class="entity-field"><span>payload</span><span class="ftype">json</span></div>
+          <div class="entity-field"><span>ref_externa</span><span class="ftype">str</span></div>
+        </div>
+      </div>
+      <div class="entity-card">
+        <div class="entity-header">ESTOQUE</div>
+        <div class="entity-fields">
+          <div class="entity-field"><span>quantidade</span><span class="ftype">int</span></div>
+          <div class="entity-field"><span>unidade_fk</span><span class="ftype">FK</span></div>
+          <div class="entity-field"><span>produto_fk</span><span class="ftype">FK</span></div>
+        </div>
+      </div>
+      <div class="entity-card">
+        <div class="entity-header">FIDELIDADE</div>
+        <div class="entity-fields">
+          <div class="entity-field"><span>consentimento</span><span class="ftype">bool</span></div>
+          <div class="entity-field"><span>pontos</span><span class="ftype">int</span></div>
+          <div class="entity-field"><span>usuario_fk</span><span class="ftype">FK</span></div>
+        </div>
+      </div>
+      <div class="entity-card">
+        <div class="entity-header">PRODUTO</div>
+        <div class="entity-fields">
+          <div class="entity-field"><span>nome</span><span class="ftype">str</span></div>
+          <div class="entity-field"><span>preco</span><span class="ftype">dec</span></div>
+          <div class="entity-field"><span>ativo</span><span class="ftype">bool</span></div>
+        </div>
+      </div>
+      <div class="entity-card">
+        <div class="entity-header">UNIDADE</div>
+        <div class="entity-fields">
+          <div class="entity-field"><span>nome</span><span class="ftype">str</span></div>
+          <div class="entity-field"><span>ativa</span><span class="ftype">bool</span></div>
+          <div class="entity-field"><span>endereco</span><span class="ftype">str</span></div>
+        </div>
+      </div>
+    </div>
+
+    <div style="margin-top:1.5rem;">
+      <p style="font-family:var(--mono);font-size:11px;text-transform:uppercase;letter-spacing:0.1em;color:var(--hint);margin-bottom:12px;">Diagrama de relacionamentos</p>
+      <div class="mermaid-wrap">
+        <div class="mermaid">
+%%{init: {'theme': 'dark', 'themeVariables': {'background':'#13151c','primaryColor':'#1a1d26','primaryTextColor':'#e8eaf0','primaryBorderColor':'rgba(255,255,255,0.12)','lineColor':'rgba(255,255,255,0.3)','secondaryColor':'#21252f','tertiaryColor':'#13151c'}}}%%
+erDiagram
+    USUARIO ||--o{ PEDIDO : realiza
+    USUARIO ||--|| FIDELIDADE : possui
+    FIDELIDADE ||--o{ FIDELIDADE_MOV : registra
+    UNIDADE ||--o{ ESTOQUE : possui
+    UNIDADE ||--o{ PEDIDO : recebe
+    PRODUTO ||--o{ ESTOQUE : compoe
+    PEDIDO ||--o{ ITEM_PEDIDO : possui
+    PRODUTO ||--o{ ITEM_PEDIDO : referencia
+    PEDIDO ||--|| PAGAMENTO : gera
+    ESTOQUE ||--o{ ESTOQUE_MOV : gera
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- SEQUÊNCIA -->
+  <section class="section" id="sequence">
+    <div class="section-header">
+      <span class="section-num">06</span>
+      <h2 class="section-title">Diagrama de <em>sequência</em></h2>
+    </div>
+    <div class="mermaid-wrap">
+      <div class="mermaid">
+%%{init: {'theme': 'dark', 'themeVariables': {'background':'#13151c','primaryColor':'#1a1d26','primaryTextColor':'#e8eaf0','primaryBorderColor':'rgba(255,255,255,0.12)','lineColor':'rgba(255,255,255,0.3)','actorBkg':'#21252f','actorBorder':'rgba(255,255,255,0.2)','actorTextColor':'#e8eaf0','activationBorderColor':'#4f8ef7','activationBkgColor':'rgba(79,142,247,0.1)','signalColor':'#8b90a0','signalTextColor':'#e8eaf0','noteBorderColor':'rgba(255,255,255,0.12)','noteBkgColor':'#21252f','noteTextColor':'#e8eaf0'}}}%%
+sequenceDiagram
+    participant C as Cliente
+    participant API as API
+    participant S as ServiçoPedido
+    participant P as Gateway Mock
+    participant DB as Banco
+
+    C->>API: POST /api/pedidos
+    API->>S: validar e criar pedido
+    S->>DB: baixa estoque + grava itens
+    S->>P: solicitar pagamento
+    P-->>S: aprovado/negado + payload
+    S->>DB: atualiza status/pagamento
+    S->>DB: credita pontos fidelidade
+    API-->>C: 201 pedido + pagamento
+      </div>
+    </div>
+  </section>
+
+  <!-- ERROS -->
+  <section class="section" id="errors">
+    <div class="section-header">
+      <span class="section-num">07</span>
+      <h2 class="section-title">Padrão de <em>erro</em></h2>
+    </div>
+    <div class="err-block">
+<span class="jk">{</span><br>
+&nbsp;&nbsp;<span class="jkey">"error"</span><span class="jk">: {</span><br>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="jkey">"code"</span><span class="jk">: </span><span class="jstr">"http_400"</span><span class="jk">,</span><br>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="jkey">"message"</span><span class="jk">: </span><span class="jstr">"Erro no campo canalPedido."</span><span class="jk">,</span><br>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="jkey">"details"</span><span class="jk">: {</span><br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="jkey">"canalPedido"</span><span class="jk">: [</span><span class="jstr">"Este campo é obrigatório."</span><span class="jk">]</span><br>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="jk">}</span><br>
+&nbsp;&nbsp;<span class="jk">}</span><br>
+<span class="jk">}</span>
+    </div>
+  </section>
+
+  <!-- HTTP CODES -->
+  <section class="section" id="http">
+    <div class="section-header">
+      <span class="section-num">08</span>
+      <h2 class="section-title">Códigos <em>HTTP</em></h2>
+    </div>
+    <div class="http-grid">
+      <div class="http-card s2"><p class="http-code">200</p><p class="http-desc">OK</p></div>
+      <div class="http-card s2"><p class="http-code">201</p><p class="http-desc">Created</p></div>
+      <div class="http-card s4"><p class="http-code">400</p><p class="http-desc">Bad Request</p></div>
+      <div class="http-card s4"><p class="http-code">401</p><p class="http-desc">Unauthorized</p></div>
+      <div class="http-card s4"><p class="http-code">403</p><p class="http-desc">Forbidden</p></div>
+      <div class="http-card s4"><p class="http-code">404</p><p class="http-desc">Not Found</p></div>
+      <div class="http-card s5"><p class="http-code">409</p><p class="http-desc">Conflict (estoque)</p></div>
+      <div class="http-card s5"><p class="http-code">500</p><p class="http-desc">Server Error</p></div>
+    </div>
+  </section>
+
+  <footer>
+    <span>Lanchonete API — Documentação técnica</span>
+    <span>gerado com Claude</span>
+  </footer>
+</main>
+
+<script>
+  mermaid.initialize({
+    startOnLoad: true,
+    theme: 'dark',
+    securityLevel: 'loose'
+  });
+
+  // Active nav highlight
+  const sections = document.querySelectorAll('section[id]');
+  const navItems = document.querySelectorAll('.nav-item');
+
+  window.addEventListener('scroll', () => {
+    let current = '';
+    sections.forEach(s => {
+      if (window.scrollY >= s.offsetTop - 120) current = s.id;
+    });
+    navItems.forEach(item => {
+      item.classList.remove('active');
+      if (item.getAttribute('href') === '#' + current) item.classList.add('active');
+    });
+  });
+</script>
+</body>
+</html>
