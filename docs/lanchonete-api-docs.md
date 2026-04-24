@@ -40,15 +40,34 @@ Antes de rodar o projeto, garanta que voce tenha:
 - Python 3.12 ou compativel
 - `pip`
 - PowerShell ou terminal equivalente
+- Git instalado
 
-## Instalacao do ambiente
+## Como clonar o repositorio
 
-No diretorio raiz do projeto, execute:
+Se voce ainda nao baixou o projeto, use:
+
+```powershell
+git clone URL_DO_REPOSITORIO
+cd NOME_DA_PASTA
+```
+
+Se o repositorio ja estiver baixado, entre na pasta raiz do projeto:
+
+```powershell
+cd c:\caminho\para\o\projeto
+```
+
+Observacao:
+
+- a pasta raiz eh a mesma que contem o arquivo `manage.py`
+
+## Como criar e ativar o ambiente virtual
+
+Na raiz do projeto, execute:
 
 ```powershell
 python -m venv .venv
 .\.venv\Scripts\Activate.ps1
-pip install django djangorestframework djangorestframework-simplejwt django-cors-headers
 ```
 
 Se o PowerShell bloquear a ativacao do ambiente virtual, rode:
@@ -56,6 +75,48 @@ Se o PowerShell bloquear a ativacao do ambiente virtual, rode:
 ```powershell
 Set-ExecutionPolicy -Scope Process Bypass
 .\.venv\Scripts\Activate.ps1
+```
+
+Quando o ambiente estiver ativo, o terminal geralmente passa a mostrar algo como:
+
+```powershell
+(.venv) PS C:\caminho\do\projeto>
+```
+
+## Como instalar as bibliotecas
+
+Com o ambiente virtual ativado:
+
+```powershell
+pip install django djangorestframework djangorestframework-simplejwt django-cors-headers
+```
+
+Bibliotecas usadas por este backend:
+
+- `django`
+- `djangorestframework`
+- `djangorestframework-simplejwt`
+- `django-cors-headers`
+
+Opcionalmente, voce pode atualizar o `pip` antes:
+
+```powershell
+python -m pip install --upgrade pip
+```
+
+## Primeiro setup completo
+
+Se voce quiser fazer tudo de uma vez desde o zero:
+
+```powershell
+git clone URL_DO_REPOSITORIO
+cd NOME_DA_PASTA
+python -m venv .venv
+.\.venv\Scripts\Activate.ps1
+python -m pip install --upgrade pip
+pip install django djangorestframework djangorestframework-simplejwt django-cors-headers
+python manage.py migrate
+python manage.py runserver
 ```
 
 ## Preparacao do banco
@@ -71,6 +132,23 @@ python manage.py migrate
 Observacao:
 
 - a migration `core/migrations/0002_seed_unidade.py` cria uma unidade padrao chamada `Loja Lulu-Burguer`
+- o banco local sera criado automaticamente como `db.sqlite3`, se necessario
+
+## Validacoes uteis antes de subir
+
+Com o ambiente pronto, voce pode validar a instalacao com:
+
+```powershell
+python --version
+python manage.py check
+python manage.py showmigrations
+```
+
+O que esperar:
+
+- `python --version` deve mostrar uma versao compativel
+- `python manage.py check` deve terminar sem erros criticos
+- `python manage.py showmigrations` deve listar as migrations do app
 
 ## Como executar o backend
 
@@ -627,6 +705,35 @@ Correcao:
 pip install django djangorestframework djangorestframework-simplejwt django-cors-headers
 ```
 
+### Erro ao ativar `.venv` no PowerShell
+
+Causa:
+
+- politica de execucao do PowerShell bloqueando scripts locais
+
+Correcao:
+
+```powershell
+Set-ExecutionPolicy -Scope Process Bypass
+.\.venv\Scripts\Activate.ps1
+```
+
+### Erro: `python` nao reconhecido
+
+Causa:
+
+- Python nao instalado ou nao configurado no PATH
+
+Correcao:
+
+- reinstale o Python marcando a opcao para adicionar ao PATH
+- ou use o launcher:
+
+```powershell
+py -3.12 -m venv .venv
+py -3.12 manage.py runserver
+```
+
 ### Erro: `401 Unauthorized`
 
 Causa:
@@ -661,8 +768,11 @@ Correcao:
 ## Resumo rapido de comandos
 
 ```powershell
+git clone URL_DO_REPOSITORIO
+cd NOME_DA_PASTA
 python -m venv .venv
 .\.venv\Scripts\Activate.ps1
+python -m pip install --upgrade pip
 pip install django djangorestframework djangorestframework-simplejwt django-cors-headers
 python manage.py migrate
 python manage.py runserver
