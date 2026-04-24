@@ -1,6 +1,6 @@
 # Lanchonete API
 
-# Para ver a documentacao com os requisitos faca o download do HTML que esta em `docs`
+# Para ver a documentacao com os requisitos faça o download do HTML que esta em `docs`
 ## No HTML existe uma representacao visual do diagrama e do DER, alem de um detalhamento de como foi implementado o backend do sistema.
 <img width="1456" height="716" alt="image" src="https://github.com/user-attachments/assets/68e33103-25fe-4400-953b-948aa9a920b8" />
 
